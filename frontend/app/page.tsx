@@ -1,29 +1,25 @@
-import React from "react";
-import TodoForm from "./TodoForm";
-import TodoList from "./TodoList";
-import { getTodos } from "@/lib/todos";
-
-const delay = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+import TodoStateOnlyApp from './TodoStateOnlyApp';
+import { fetchTodos } from '@/services/todoService';
+import { Todo } from '@/types/todo';
 
 export default async function TodoPage() {
-  await delay(2000);
+  const data = await fetchTodos();
 
-  const todos = await getTodos();
+  const initialTodos: Todo[] = data.todos.map((todo) => ({
+    id: todo.id,
+    title: todo.todo,
+    description: 'Todo dari DummyJSON API',
+    completed: todo.completed,
+    createdAt: new Date().toISOString().split('T')[0],
+  }));
 
   return (
-    <main className="min-h-screen p-8 bg-gray-100">
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-        <header className="mb-8 border-b pb-4">
-          <h1 className="text-3xl font-bold text-gray-800 text-center">
-            Daftar Tugas (Todo List)
-          </h1>
-        </header>
+    <main className="max-w-3xl mx-auto p-6">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">
+        Todo App
+      </h1>
 
-        <TodoForm />
-
-        <TodoList todos={todos} />
-      </div>
+      <TodoStateOnlyApp initialTodos={initialTodos} />
     </main>
   );
 }
